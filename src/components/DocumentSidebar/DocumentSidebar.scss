@@ -2,7 +2,6 @@
 @import '../../styles/mixins';
 
 .document-sidebar {
-  position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
@@ -21,7 +20,6 @@
 
   &__header {
     padding: $spacing-md;
-    border-bottom: 1px solid $color-border;
     display: flex;
     justify-content: flex-end;
   }
@@ -50,7 +48,6 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-sm;
-    border-bottom: 1px solid $color-border;
   }
 
   &__action-btn {
@@ -116,6 +113,7 @@
     border-radius: $radius-md;
     cursor: pointer;
     transition: all $transition-fast;
+    position: relative;
 
     &:hover {
       background: $color-bg-gray;
@@ -151,6 +149,127 @@
     font-size: $font-xs;
     color: $color-text-tertiary;
     @include truncate;
+  }
+
+  &__item-menu {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__menu-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-text-tertiary;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $color-bg-light;
+      color: $color-text-secondary;
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 4px;
+    background: $color-bg-white;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    min-width: 160px;
+    z-index: 1000;
+    padding: $spacing-xs;
+  }
+
+  &__dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm;
+    background: transparent;
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: $font-sm;
+    color: $color-text-primary;
+    text-align: left;
+    transition: all $transition-fast;
+
+    svg {
+      flex-shrink: 0;
+      color: $color-text-secondary;
+    }
+
+    &:hover {
+      background: $color-bg-gray;
+    }
+
+    &--danger {
+      color: $color-error;
+
+      svg {
+        color: $color-error;
+      }
+
+      &:hover {
+        background: rgba($color-error, 0.1);
+      }
+    }
+  }
+
+  &__rename-form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    width: 100%;
+  }
+
+  &__rename-input {
+    width: 100%;
+    padding: $spacing-xs;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: $font-sm;
+    font-family: inherit;
+    color: $color-text-primary;
+
+    &:focus {
+      outline: none;
+      border-color: $color-primary;
+    }
+  }
+
+  &__rename-actions {
+    display: flex;
+    gap: $spacing-xs;
+    justify-content: flex-end;
+  }
+
+  &__rename-btn {
+    width: 24px;
+    height: 24px;
+    border: 1px solid $color-border;
+    background: $color-bg-white;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    font-size: $font-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $color-bg-gray;
+    }
   }
 }
 

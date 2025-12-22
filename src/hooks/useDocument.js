@@ -109,7 +109,19 @@ export const useDocument = () => {
 
       setDocumentText(content);
       setIsUploading(false);
-      return { success: true, content };
+      
+      // Return the document data for immediate use
+      return { 
+        success: true, 
+        content,
+        documentData: {
+          title: documentTitle || fileName.replace(/\.[^/.]+$/, ''),
+          content,
+          language,
+          taskType,
+          wordCount: content.replace(/<[^>]*>/g, '').trim().split(/\s+/).length,
+        }
+      };
     } catch (err) {
       console.error('Failed to parse document:', err);
       setIsUploading(false);

@@ -32,6 +32,8 @@ function App() {
   const {
     savedDocuments,
     saveDocument,
+    deleteDocument,
+    updateDocument,
   } = useSavedDocuments();
 
   const { control } = useChatKitSession();
@@ -39,10 +41,9 @@ function App() {
   // Handle document upload and auto-save
   const handleUpload = async (file) => {
     const result = await handleFileUpload(file);
-    if (result.success) {
+    if (result.success && result.documentData) {
       // Auto-save the uploaded document
-      const currentDoc = getCurrentDocument();
-      saveDocument(currentDoc);
+      saveDocument(result.documentData);
     }
     return result;
   };
@@ -57,12 +58,37 @@ function App() {
     loadDocument(doc);
   };
 
+  // Handle deleting a document
+  const handleDeleteDocument = (docId) => {
+    deleteDocument(docId);
+  };
+
+  // Handle renaming a document
+  const handleRenameDocument = (docId, newTitle) => {
+    updateDocument(docId, { title: newTitle });
+  };
+
+  // Handle copying a document
+  const handleCopyDocument = (docId) => {
+    const doc = savedDocuments.find(d => d.id === docId);
+    if (doc) {
+      const copiedDoc = {
+        ...doc,
+        title: `${doc.title} (Copy)`,
+      };
+      saveDocument(copiedDoc);
+    }
+  };
+
   return (
     <div className={`app ${isSidebarOpen ? 'app-with-sidebar' : ''}`}>
       <DocumentSidebar
         savedDocuments={savedDocuments}
         onSelectDocument={handleSelectDocument}
         onNewChat={handleNewChat}
+        onDeleteDocument={handleDeleteDocument}
+        onRenameDocument={handleRenameDocument}
+        onCopyDocument={handleCopyDocument}
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
         isOpen={isSidebarOpen}
       />
