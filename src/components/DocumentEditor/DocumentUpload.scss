@@ -14,13 +14,44 @@
 
   &__buttons {
     @include flex-center;
-    gap: $spacing-sm;
+    gap: $spacing-md;
   }
 
   &__btn {
-    @include button-outline;
     display: inline-flex;
     align-items: center;
-    gap: $spacing-xs;
+    gap: 10px;
+    padding: 12px 24px;
+    background: transparent;
+    border: 2px solid #2d7a5f;
+    border-radius: 50px;
+    font-size: $font-base;
+    font-weight: $font-medium;
+    color: #2d7a5f;
+    cursor: pointer;
+    transition: all $transition-fast;
+    outline: none;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      background: rgba(45, 122, 95, 0.05);
+      border-color: #246650;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
   }
 }
