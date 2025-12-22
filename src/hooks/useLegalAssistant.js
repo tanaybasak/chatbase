@@ -49,6 +49,23 @@ export function useLegalAssistant(documentContext = {}) {
   }, []);
 
   /**
+   * Get relevant context for the current document (static filtering - legacy)
+   */
+  const getDocumentContext = useCallback(() => {
+    if (!isReady) return '';
+
+    // Detect contract type from document
+    const contractType = detectContractType(documentContext);
+    
+    const context = {
+      contractType,
+      severity: 'high' // Prioritize high-severity rules
+    };
+
+    return legalRulesRAG.buildChatContext(context, 10);
+  }, [isReady, documentContext]);
+
+  /**
    * Get semantically relevant context based on user query
    * @param {string} query - User's question or document excerpt
    */
@@ -68,23 +85,6 @@ export function useLegalAssistant(documentContext = {}) {
       return getDocumentContext(); // Fallback
     }
   }, [isReady, embeddingsReady, getDocumentContext]);
-
-  /**
-   * Get relevant context for the current document (static filtering - legacy)
-   */
-  const getDocumentContext = useCallback(() => {
-    if (!isReady) return '';
-
-    // Detect contract type from document
-    const contractType = detectContractType(documentContext);
-    
-    const context = {
-      contractType,
-      severity: 'high' // Prioritize high-severity rules
-    };
-
-    return legalRulesRAG.buildChatContext(context, 10);
-  }, [isReady, documentContext]);
 
   /**
    * Get compact context (token-efficient)
