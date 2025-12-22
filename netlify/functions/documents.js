@@ -42,14 +42,15 @@ exports.handler = async (event, context) => {
     'Content-Type': 'application/json'
   };
 
+  // Handle preflight
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 200, headers, body: '' };
   }
 
-  console.log('Request:', event.httpMethod, event.path);
-  console.log('Query params:', event.queryStringParameters);
-
   try {
+    console.log('Request:', event.httpMethod, event.path);
+    console.log('Query params:', event.queryStringParameters);
+
     // Initialize Prisma client
     const prisma = getPrismaClient();
 
@@ -81,8 +82,9 @@ exports.handler = async (event, context) => {
       console.log('Found user:', user.id);
     }
 
+    // Handle different HTTP methods
     switch (event.httpMethod) {
-      case 'GET':
+      case 'GET': {
         // Get all documents for user
         const documents = await prisma.document.findMany({
           where: { userId: user.id },
@@ -93,8 +95,9 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify(documents)
         };
+      }
 
-      case 'POST':
+      case 'POST': {
         // Create new document
         const createData = JSON.parse(event.body);
         console.log('Creating document:', createData);
@@ -110,8 +113,9 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify(newDocument)
         };
+      }
 
-      case 'PUT':
+      case 'PUT': {
         // Update document
         const updateData = JSON.parse(event.body);
         const { id, ...updates } = updateData;
@@ -124,8 +128,9 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify(updatedDocument)
         };
+      }
 
-      case 'DELETE':
+      case 'DELETE': {
         // Delete document
         const { id: deleteId } = JSON.parse(event.body);
         await prisma.document.delete({
@@ -136,6 +141,7 @@ exports.handler = async (event, context) => {
           headers,
           body: JSON.stringify({ success: true })
         };
+      }
 
       default:
         return {
@@ -145,15 +151,15 @@ exports.handler = async (event, context) => {
         };
     }
   } catch (error) {
-    console.error('Database error:', error);
+    console.error('Error in handler:', error);
+    console.error('Error stack:', error.stack);
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({ 
         error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        details: error.toString()
       })
     };
   }
-  // Don't disconnect in serverless - connection pool handles this
 };
