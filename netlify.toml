@@ -6,6 +6,10 @@
 [build.environment]
   SECRETS_SCAN_ENABLED = "false"
 
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client", "@prisma/engines"]
+
 [[redirects]]
   from = "/api/chatkit/session"
   to = "/.netlify/functions/chatkit-session"
