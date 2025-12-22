@@ -1,3 +1,6 @@
+const { buildLegalSystemInstructions } = require('./utils/legalContext');
+const { buildSemanticInstructions } = require('./utils/legalSemanticSearch');
+
 exports.handler = async (event, context) => {
   // Enable CORS
   const headers = {
@@ -26,7 +29,7 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { deviceId } = JSON.parse(event.body);
+    const { deviceId, contractType, query, useSemanticSearch = false } = JSON.parse(event.body);
     const workflowId = process.env.REACT_APP_CHATKIT_WORKFLOW_ID;
     const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
@@ -40,7 +43,19 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Create ChatKit session
+    let systemInstructions;
+
+    // Use semantic search if query is provided and enabled
+    if (useSemanticSearch && query) {
+      console.log('🔍 Using semantic search for query:', query.substring(0, 50));
+      systemInstructions = await buildSemanticInstructions(query, 5);
+    } else {
+      // Fallback to static filtering by contract type
+      console.log('📋 Using static context for contract type:', contractType);
+      systemInstructions = buildLegalSystemInstructions(contractType);
+    }
+
+    // Create ChatKit session with legal context
     const response = await fetch('https://api.openai.com/v1/chatkit/sessions', {
       method: 'POST',
       headers: {
@@ -55,7 +70,8 @@ exports.handler = async (event, context) => {
           file_upload: {
             enabled: true
           }
-        }
+        },
+        instructions: systemInstructions
       }),
     });
 

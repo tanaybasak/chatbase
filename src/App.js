@@ -38,6 +38,15 @@ function App() {
 
   const { control } = useChatKitSession();
 
+  // Build document context for legal assistant
+  const documentContext = {
+    documentText,
+    documentTitle,
+    language,
+    taskType,
+    wordCount
+  };
+
   // Handle document upload and auto-save
   const handleUpload = async (file) => {
     const result = await handleFileUpload(file);
@@ -115,7 +124,7 @@ function App() {
           />
         }
         rightPanel={
-          <ChatPanel control={control} />
+          <ChatPanel control={control} documentContext={documentContext} />
         }
       />
     </div>
