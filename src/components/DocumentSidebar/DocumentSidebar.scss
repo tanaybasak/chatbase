@@ -92,6 +92,24 @@
     letter-spacing: 0.5px;
   }
 
+  &__group {
+    margin-bottom: $spacing-lg;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__group-title {
+    font-size: $font-xs;
+    font-weight: $font-semibold;
+    color: $color-text-tertiary;
+    margin: 0 0 $spacing-xs 0;
+    padding: 0 $spacing-md;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
   &__empty {
     font-size: $font-sm;
     color: $color-text-tertiary;
