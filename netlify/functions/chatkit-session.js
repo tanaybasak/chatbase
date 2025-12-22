@@ -50,7 +50,21 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         workflow: { id: workflowId },
-        user: deviceId || `user-${Date.now()}`
+        user: deviceId || `user-${Date.now()}`,
+        file_upload: {
+          enabled: true,
+          max_file_size: 10485760, // 10MB
+          allowed_mime_types: [
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword',
+            'text/plain',
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp'
+          ]
+        }
       }),
     });
 
