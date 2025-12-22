@@ -13,21 +13,35 @@ exports.handler = async (event, context) => {
     // Test 2: Try to load Prisma modules
     let prismaLoaded = false;
     let neonLoaded = false;
+    let clientCreated = false;
+    let querySuccess = false;
     let error = null;
+    let queryError = null;
 
     try {
       const { PrismaClient } = require('@prisma/client');
       const { Pool } = require('@neondatabase/serverless');
       const { PrismaNeon } = require('@prisma/adapter-neon');
+      const { neonConfig } = require('@neondatabase/serverless');
       
       prismaLoaded = true;
       neonLoaded = true;
 
-      // Test 3: Try to create client (but don't use it)
+      // Test 3: Try to create client
       if (hasDbUrl) {
+        neonConfig.fetchConnectionCache = true;
         const pool = new Pool({ connectionString: process.env.DATABASE_URL });
         const adapter = new PrismaNeon(pool);
         const prisma = new PrismaClient({ adapter });
+        clientCreated = true;
+
+        // Test 4: Try an actual query
+        try {
+          const userCount = await prisma.user.count();
+          querySuccess = true;
+        } catch (qe) {
+          queryError = qe.message;
+        }
       }
     } catch (e) {
       error = e.message;
@@ -41,7 +55,10 @@ exports.handler = async (event, context) => {
         databaseUrlLength: hasDbUrl ? process.env.DATABASE_URL.length : 0,
         prismaLoaded,
         neonLoaded,
+        clientCreated,
+        querySuccess,
         error,
+        queryError,
         nodeVersion: process.version
       })
     };
