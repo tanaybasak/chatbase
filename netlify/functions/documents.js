@@ -125,9 +125,11 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: error.message })
+      body: JSON.stringify({ 
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      })
     };
-  } finally {
-    await prisma.$disconnect();
   }
+  // Don't disconnect in serverless - connection pool handles this
 };
