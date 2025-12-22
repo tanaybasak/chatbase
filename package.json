@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@openai/chatkit-react": "^1.4.0",
+    "@tinymce/tinymce-react": "^6.3.0",
     "axios": "^1.13.2",
     "concurrently": "^9.2.1",
     "cors": "^2.8.5",

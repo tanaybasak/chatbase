@@ -4,16 +4,71 @@
 .document-textarea {
   flex: 1;
   padding: $spacing-xl;
-  overflow-y: auto;
-  @include custom-scrollbar;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
+  // TinyMCE container styling
+  :global {
+    .tox-tinymce {
+      border: none !important;
+      border-radius: $radius-lg;
+      height: 100% !important;
+    }
+
+    .tox-editor-header {
+      border-bottom: 1px solid $color-border !important;
+      padding: $spacing-xs 0;
+      background: $color-bg-light !important;
+    }
+
+    .tox-toolbar {
+      background: $color-bg-light !important;
+      padding: $spacing-xs $spacing-sm !important;
+    }
+
+    .tox-toolbar__primary {
+      background: $color-bg-light !important;
+    }
+
+    .tox-tbtn {
+      color: $color-text-secondary !important;
+      
+      &:hover {
+        background: $color-bg-hover !important;
+      }
+
+      svg {
+        fill: $color-text-secondary !important;
+      }
+    }
+
+    .tox-tbtn--enabled {
+      background: $color-bg-gray !important;
+    }
+
+    .tox-edit-area {
+      border: none !important;
+    }
+
+    .tox-edit-area__iframe {
+      background: $color-bg-white !important;
+    }
+
+    // Custom scrollbar for editor
+    .tox-sidebar-wrap {
+      @include custom-scrollbar;
+    }
+  }
+
+  // Fallback textarea styling (for when TinyMCE is loading)
   &__input {
     width: 100%;
     height: 100%;
     border: none;
     outline: none;
     font-size: $font-base;
-    line-height: $line-height-base;
+    line-height: $line-height-relaxed;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
     resize: none;
     color: $color-text-primary;

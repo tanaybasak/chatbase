@@ -10,8 +10,16 @@ export const useDocument = () => {
   const [language, setLanguage] = useState('English (US)');
   const [taskType, setTaskType] = useState('Enter writing task');
 
-  // Calculate word count
-  const wordCount = documentText.split(/\s+/).filter(word => word.length > 0).length;
+  // Calculate word count - strips HTML tags for accurate count
+  const stripHtml = (html) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+  
+  const wordCount = stripHtml(documentText)
+    .split(/\s+/)
+    .filter(word => word.length > 0).length;
 
   // Handle paste from clipboard
   const handlePasteText = useCallback(async () => {
