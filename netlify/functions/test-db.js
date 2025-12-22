@@ -20,27 +20,19 @@ exports.handler = async (event, context) => {
 
     try {
       const { PrismaClient } = require('@prisma/client');
-      const { Pool } = require('@neondatabase/serverless');
+      const { neon, neonConfig } = require('@neondatabase/serverless');
       const { PrismaNeon } = require('@prisma/adapter-neon');
-      const { neonConfig } = require('@neondatabase/serverless');
       
       prismaLoaded = true;
       neonLoaded = true;
 
-      // Test 3: Try to create client
+      // Test 3: Try to create client with neon HTTP function
       if (hasDbUrl) {
         neonConfig.fetchConnectionCache = true;
         
-        // Log the connection string format
-        const connStr = process.env.DATABASE_URL;
-        console.log('Connection string starts with:', connStr.substring(0, 20));
-        console.log('Connection string length:', connStr.length);
-        
-        const pool = new Pool({ connectionString: connStr });
-        const adapter = new PrismaNeon(pool);
-        
-        // Check pool configuration
-        console.log('Pool created with connection string');
+        console.log('Using neon HTTP function instead of Pool');
+        const sql = neon(process.env.DATABASE_URL);
+        const adapter = new PrismaNeon(sql);
         
         const prisma = new PrismaClient({ adapter });
         clientCreated = true;

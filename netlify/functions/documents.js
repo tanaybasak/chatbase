@@ -1,15 +1,9 @@
 const { PrismaClient } = require('@prisma/client');
-const { neonConfig, Pool } = require('@neondatabase/serverless');
+const { neonConfig, neon } = require('@neondatabase/serverless');
 const { PrismaNeon } = require('@prisma/adapter-neon');
 
 // Configure Neon for serverless environment
 neonConfig.fetchConnectionCache = true;
-
-// WebSocket is required for Neon serverless in some environments
-if (typeof WebSocket === 'undefined') {
-  const ws = require('ws');
-  neonConfig.webSocketConstructor = ws;
-}
 
 // Lazy initialization of Prisma
 let prisma;
@@ -26,29 +20,16 @@ function getPrismaClient() {
 
   console.log('Initializing Prisma with DATABASE_URL');
 
-  try {
-    // Create connection pool with Neon
-    const pool = new Pool({ connectionString: databaseUrl });
-    
-    console.log('Pool created successfully');
-    
-    const adapter = new PrismaNeon(pool);
-    
-    console.log('Adapter created successfully');
+  // Use neon HTTP function instead of Pool for better serverless compatibility
+  const sql = neon(databaseUrl);
+  const adapter = new PrismaNeon(sql);
 
-    // Initialize Prisma Client with adapter
-    prisma = new PrismaClient({ 
-      adapter,
-      log: ['query', 'error', 'warn']
-    });
-    
-    console.log('Prisma client initialized successfully');
-    
-    return prisma;
-  } catch (error) {
-    console.error('Error initializing Prisma:', error);
-    throw error;
-  }
+  // Initialize Prisma Client with the adapter
+  prisma = new PrismaClient({ adapter });
+  
+  console.log('Prisma client initialized with neon HTTP adapter');
+  
+  return prisma;
 }
 
 exports.handler = async (event, context) => {
