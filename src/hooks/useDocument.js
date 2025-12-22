@@ -15,6 +15,7 @@ export const useDocument = () => {
   const [language, setLanguage] = useState('English (US)');
   const [taskType, setTaskType] = useState('Enter writing task');
   const [isUploading, setIsUploading] = useState(false);
+  const [currentDocumentId, setCurrentDocumentId] = useState(null);
 
   // Calculate word count - strips HTML tags for accurate count
   const stripHtml = (html) => {
@@ -120,12 +121,34 @@ export const useDocument = () => {
   const clearDocument = useCallback(() => {
     setDocumentText('');
     setDocumentTitle('');
+    setCurrentDocumentId(null);
   }, []);
 
   // Update text
   const updateText = useCallback((text) => {
     setDocumentText(text);
   }, []);
+
+  // Load a saved document
+  const loadDocument = useCallback((doc) => {
+    setDocumentText(doc.content);
+    setDocumentTitle(doc.title);
+    setLanguage(doc.language);
+    setTaskType(doc.taskType);
+    setCurrentDocumentId(doc.id);
+  }, []);
+
+  // Get current document data
+  const getCurrentDocument = useCallback(() => {
+    return {
+      id: currentDocumentId,
+      title: documentTitle,
+      content: documentText,
+      language,
+      taskType,
+      wordCount,
+    };
+  }, [currentDocumentId, documentTitle, documentText, language, taskType, wordCount]);
 
   return {
     // State
@@ -135,6 +158,7 @@ export const useDocument = () => {
     taskType,
     wordCount,
     isUploading,
+    currentDocumentId,
     
     // Setters
     setDocumentText: updateText,
@@ -145,6 +169,8 @@ export const useDocument = () => {
     // Actions
     handlePasteText,
     handleFileUpload,
-    clearDocument
+    clearDocument,
+    loadDocument,
+    getCurrentDocument
   };
 };

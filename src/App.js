@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.scss';
 import SplitLayout from './components/SplitLayout';
 import DocumentEditor from './components/DocumentEditor';
 import ChatPanel from './components/ChatPanel';
+import DocumentSidebar from './components/DocumentSidebar';
 import { useDocument } from './hooks/useDocument';
+import { useSavedDocuments } from './hooks/useSavedDocuments';
 import { useChatKitSession } from './hooks/useChatKitSession';
 
 function App() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const {
     documentText,
     documentTitle,
@@ -19,13 +23,50 @@ function App() {
     setLanguage,
     setTaskType,
     handlePasteText,
-    handleFileUpload
+    handleFileUpload,
+    clearDocument,
+    loadDocument,
+    getCurrentDocument
   } = useDocument();
+
+  const {
+    savedDocuments,
+    saveDocument,
+    deleteDocument,
+  } = useSavedDocuments();
 
   const { control } = useChatKitSession();
 
+  // Handle document upload and auto-save
+  const handleUpload = async (file) => {
+    const result = await handleFileUpload(file);
+    if (result.success) {
+      // Auto-save the uploaded document
+      const currentDoc = getCurrentDocument();
+      saveDocument(currentDoc);
+    }
+    return result;
+  };
+
+  // Handle new chat - clear current document
+  const handleNewChat = () => {
+    clearDocument();
+  };
+
+  // Handle selecting a saved document
+  const handleSelectDocument = (doc) => {
+    loadDocument(doc);
+  };
+
   return (
-    <div className="app">
+    <div className={`app ${isSidebarOpen ? 'app-with-sidebar' : ''}`}>
+      <DocumentSidebar
+        savedDocuments={savedDocuments}
+        onSelectDocument={handleSelectDocument}
+        onNewChat={handleNewChat}
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        isOpen={isSidebarOpen}
+      />
       <SplitLayout
         leftWidth={60}
         leftPanel={
@@ -40,7 +81,7 @@ function App() {
             onTextChange={setDocumentText}
             wordCount={wordCount}
             onPasteText={handlePasteText}
-            onFileUpload={handleFileUpload}
+            onFileUpload={handleUpload}
             isUploading={isUploading}
           />
         }
