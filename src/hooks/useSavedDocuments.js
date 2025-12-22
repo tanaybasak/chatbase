@@ -1,83 +1,127 @@
 import { useState, useCallback, useEffect } from 'react';
 
 /**
- * Custom hook for managing saved documents
+ * Custom hook for managing saved documents with database backend
  * @returns {Object} Saved documents state and handlers
  */
 export const useSavedDocuments = () => {
-  const STORAGE_KEY = 'chatbase_saved_documents';
   const [savedDocuments, setSavedDocuments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Load saved documents from localStorage on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setSavedDocuments(JSON.parse(stored));
-      }
-    } catch (err) {
-      console.error('Failed to load saved documents:', err);
+  // Get device ID (same as ChatKit)
+  const getDeviceId = useCallback(() => {
+    const storageKey = 'chatkit_device_id';
+    let deviceId = localStorage.getItem(storageKey);
+    
+    if (!deviceId) {
+      deviceId = `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem(storageKey, deviceId);
     }
+    
+    return deviceId;
   }, []);
+
+  const deviceId = getDeviceId();
+  const apiUrl = '/.netlify/functions/documents';
+
+  // Load documents from database
+  const loadDocuments = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}?deviceId=${deviceId}`);
+      if (response.ok) {
+        const documents = await response.json();
+        setSavedDocuments(documents);
+      }
+    } catch (error) {
+      console.error('Failed to load documents:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [deviceId]);
+
+  // Load documents on mount
+  useEffect(() => {
+    loadDocuments();
+  }, [loadDocuments]);
 
   // Save document
-  const saveDocument = useCallback((document) => {
-    const newDoc = {
-      id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      title: document.title || 'Untitled Document',
-      content: document.content,
-      language: document.language,
-      taskType: document.taskType,
-      wordCount: document.wordCount,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+  const saveDocument = useCallback(async (document) => {
+    try {
+      const response = await fetch(`${apiUrl}?deviceId=${deviceId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: document.title || 'Untitled Document',
+          content: document.content,
+          language: document.language,
+          taskType: document.taskType,
+          wordCount: document.wordCount,
+        })
+      });
 
-    setSavedDocuments((prev) => {
-      const updated = [newDoc, ...prev];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
-
-    return newDoc;
-  }, []);
+      if (response.ok) {
+        const newDoc = await response.json();
+        setSavedDocuments((prev) => [newDoc, ...prev]);
+        return newDoc;
+      }
+    } catch (error) {
+      console.error('Failed to save document:', error);
+    }
+  }, [deviceId]);
 
   // Update existing document
-  const updateDocument = useCallback((id, updates) => {
-    setSavedDocuments((prev) => {
-      const updated = prev.map((doc) =>
-        doc.id === id
-          ? { ...doc, ...updates, updatedAt: new Date().toISOString() }
-          : doc
-      );
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  }, []);
+  const updateDocument = useCallback(async (id, updates) => {
+    try {
+      const response = await fetch(`${apiUrl}?deviceId=${deviceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...updates })
+      });
+
+      if (response.ok) {
+        const updatedDoc = await response.json();
+        setSavedDocuments((prev) =>
+          prev.map((doc) => (doc.id === id ? updatedDoc : doc))
+        );
+      }
+    } catch (error) {
+      console.error('Failed to update document:', error);
+    }
+  }, [deviceId]);
 
   // Delete document
-  const deleteDocument = useCallback((id) => {
-    setSavedDocuments((prev) => {
-      const updated = prev.filter((doc) => doc.id !== id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  }, []);
+  const deleteDocument = useCallback(async (id) => {
+    try {
+      const response = await fetch(`${apiUrl}?deviceId=${deviceId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+
+      if (response.ok) {
+        setSavedDocuments((prev) => prev.filter((doc) => doc.id !== id));
+      }
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+    }
+  }, [deviceId]);
 
   // Get document by ID
   const getDocument = useCallback((id) => {
     return savedDocuments.find((doc) => doc.id === id);
   }, [savedDocuments]);
 
-  // Clear all documents
-  const clearAllDocuments = useCallback(() => {
-    setSavedDocuments([]);
-    localStorage.removeItem(STORAGE_KEY);
-  }, []);
-
   return {
     savedDocuments,
+    isLoading,
     saveDocument,
+    updateDocument,
+    deleteDocument,
+    getDocument,
+    loadDocuments,
+  };
+};
     updateDocument,
     deleteDocument,
     getDocument,
