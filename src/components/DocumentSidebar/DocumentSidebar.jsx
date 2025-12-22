@@ -104,6 +104,7 @@ const DocumentSidebar = ({
 
         <button 
           className="document-sidebar__action-btn"
+          onClick={() => !isOpen && onToggleSidebar()}
           aria-label="Saved documents"
           title="Saved documents"
         >

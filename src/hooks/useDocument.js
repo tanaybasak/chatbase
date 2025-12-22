@@ -111,11 +111,12 @@ export const useDocument = () => {
       setIsUploading(false);
       
       // Return the document data for immediate use
+      const title = file.name.replace(/\.[^/.]+$/, '');
       return { 
         success: true, 
         content,
         documentData: {
-          title: documentTitle || fileName.replace(/\.[^/.]+$/, ''),
+          title: title,
           content,
           language,
           taskType,
