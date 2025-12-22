@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
 
     try {
       const { PrismaClient } = require('@prisma/client');
-      const { neon, neonConfig } = require('@neondatabase/serverless');
+      const { neonConfig } = require('@neondatabase/serverless');
       const { PrismaNeonHttp } = require('@prisma/adapter-neon');
       
       prismaLoaded = true;
@@ -30,9 +30,8 @@ exports.handler = async (event, context) => {
       if (hasDbUrl) {
         neonConfig.fetchConnectionCache = true;
         
-        console.log('Using neon HTTP function instead of Pool');
-        const sql = neon(process.env.DATABASE_URL);
-        const adapter = new PrismaNeonHttp(sql);
+        console.log('Using PrismaNeonHttp with connection string');
+        const adapter = new PrismaNeonHttp(process.env.DATABASE_URL);
         
         const prisma = new PrismaClient({ adapter });
         clientCreated = true;
