@@ -23,20 +23,6 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
   }
 
-  &__status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: $color-text-secondary;
-    
-    .status-indicator {
-      color: #10a37f;
-      font-size: 0.6rem;
-      animation: pulse 2s ease-in-out infinite;
-    }
-  }
-
   &__container {
     flex: 1;
     display: flex;
@@ -60,14 +46,5 @@
       display: flex;
       flex-direction: column;
     }
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
   }
 }

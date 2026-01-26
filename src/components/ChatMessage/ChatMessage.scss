@@ -23,6 +23,112 @@
     .message-text {
       background: $color-message-assistant-bg;
       color: $color-message-assistant-text;
+
+      // Markdown formatting styles
+      p {
+        margin: 0 0 12px 0;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        margin: 16px 0 8px 0;
+        font-weight: 600;
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+
+      h1 { font-size: 1.5em; }
+      h2 { font-size: 1.3em; }
+      h3 { font-size: 1.1em; }
+
+      strong {
+        font-weight: 600;
+      }
+
+      em {
+        font-style: italic;
+      }
+
+      ul, ol {
+        margin: 8px 0;
+        padding-left: 24px;
+      }
+
+      li {
+        margin: 4px 0;
+      }
+
+      blockquote {
+        border-left: 3px solid rgba(0, 0, 0, 0.1);
+        padding-left: 12px;
+        margin: 8px 0;
+        color: rgba(0, 0, 0, 0.7);
+      }
+
+      .inline-code {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+
+      .code-block {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+        padding: 12px;
+        margin: 8px 0;
+        overflow-x: auto;
+
+        code {
+          font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+          font-size: 0.9em;
+          line-height: 1.5;
+        }
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        margin: 12px 0;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.95em;
+
+        th, td {
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          padding: 8px 12px;
+          text-align: left;
+        }
+
+        th {
+          background: rgba(0, 0, 0, 0.05);
+          font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+          background: rgba(0, 0, 0, 0.02);
+        }
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        margin: 16px 0;
+      }
+
+      a {
+        color: #0066cc;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 
