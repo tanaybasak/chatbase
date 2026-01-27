@@ -71,7 +71,7 @@ export const useChatKitSession = () => {
     },
     composer: {
       attachments: {
-        enabled: config.features.enableAttachments,
+        enabled: false
       }
     },
     header: {
