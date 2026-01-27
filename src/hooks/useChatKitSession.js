@@ -67,7 +67,27 @@ export const useChatKitSession = () => {
 
   const chatKit = useChatKit({
     api: {
-      getClientSecret: fetchClientSecret
+      getClientSecret: fetchClientSecret,
+      uploadFile: async (file) => {
+        // Upload through our Netlify function proxy
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const uploadUrl = backendUrl 
+          ? `${backendUrl}/api/chatkit/upload`
+          : '/.netlify/functions/chatkit-upload';
+        
+        const response = await fetch(uploadUrl, {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error('File upload failed');
+        }
+        
+        return response.json();
+      }
     },
     composer: {
       attachments: {
