@@ -1,22 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ChatKit } from '@openai/chatkit-react';
-import { useLegalAssistant } from '../../hooks/useLegalAssistant';
 import './ChatPanel.scss';
 
 const ChatPanel = ({ control, title = "AI Legal Assistant", documentContext }) => {
-  const { 
-    isReady, 
-    embeddingsReady, 
-    stats 
-  } = useLegalAssistant(documentContext);
-
-  // Log when legal rules are ready
-  useEffect(() => {
-    if (isReady) {
-      const embeddingStatus = embeddingsReady ? 'with vector search' : '(generating embeddings)';
-      console.log(`✅ Legal assistant ready with ${stats.total} rules ${embeddingStatus}`);
-    }
-  }, [isReady, embeddingsReady, stats]);
 
   return (
     <div className="chat-panel">
