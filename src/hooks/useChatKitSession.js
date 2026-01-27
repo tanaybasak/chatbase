@@ -73,6 +73,12 @@ export const useChatKitSession = () => {
       attachments: {
         enabled: config.features.enableAttachments
       }
+    },
+    header: {
+      enabled: true
+    },
+    history: {
+      enabled: false
     }
   });
 
