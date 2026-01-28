@@ -1,1 +1,3 @@
+# Redirects are handled by vercel.json for Vercel deployments
+# This file is only used for Netlify deployments
 /* /index.html 200
