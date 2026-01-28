@@ -1,3 +1,5 @@
 netlify.toml
 netlify/
 _redirects
+build/_redirects
+public/_redirects
