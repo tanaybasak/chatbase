@@ -1,5 +1,5 @@
 import { useChatKit } from '@openai/chatkit-react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import config from '../config/env';
 
 /**
@@ -104,13 +104,33 @@ export const useChatKitSession = () => {
     }
   }, [backendUrl, getDeviceId]);
 
+  const { enableAttachments } = config.features;
+
+  // Clear cached session data when attachment settings change
+  useEffect(() => {
+    const cacheKey = 'chatkit_attachment_setting';
+    const cachedSetting = localStorage.getItem(cacheKey);
+    
+    if (cachedSetting !== String(enableAttachments)) {
+      // Clear any ChatKit cached data
+      const keys = Object.keys(localStorage);
+      keys.forEach(key => {
+        if (key.startsWith('chatkit_') && key !== 'chatkit_device_id') {
+          localStorage.removeItem(key);
+        }
+      });
+      localStorage.setItem(cacheKey, String(enableAttachments));
+      console.log('🔄 Attachment setting changed, cleared cached session');
+    }
+  }, [enableAttachments]);
+
   const chatKit = useChatKit({
     api: {
       getClientSecret: fetchClientSecret
     },
     composer: {
       attachments: {
-        enabled: true
+        enabled: enableAttachments
       }
     },
     header: {
