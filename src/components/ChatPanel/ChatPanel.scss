@@ -145,4 +145,23 @@
       }
     }
   }
+
+  // Hide attachment button when attachments are disabled
+  &--no-attachments {
+    :global {
+      // Hide the attachment/file upload button in ChatKit
+      button[aria-label*="attach"],
+      button[aria-label*="Attach"],
+      button[aria-label*="file"],
+      button[aria-label*="File"],
+      button[aria-label*="upload"],
+      button[aria-label*="Upload"],
+      [class*="attach"],
+      [class*="Attach"],
+      [class*="file-upload"],
+      [class*="FileUpload"] {
+        display: none !important;
+      }
+    }
+  }
 }

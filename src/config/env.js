@@ -22,8 +22,8 @@ const config = {
 
   // Feature Flags
   features: {
-    enableAttachments: true,
-    enableFileUpload: true,
+    enableAttachments: process.env.REACT_APP_ENABLE_ATTACHMENTS === 'true',
+    enableFileUpload: process.env.REACT_APP_ENABLE_ATTACHMENTS === 'true',
   },
 };
 

@@ -41,6 +41,7 @@ app.post('/api/chatkit/session', async (req, res) => {
   try {
     const workflowId = process.env.REACT_APP_CHATKIT_WORKFLOW_ID;
     const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+    const enableAttachments = process.env.REACT_APP_ENABLE_ATTACHMENTS === 'true';
 
     if (!workflowId || !apiKey) {
       return res.status(500).json({ 
@@ -59,6 +60,11 @@ app.post('/api/chatkit/session', async (req, res) => {
       body: JSON.stringify({
         workflow: { id: workflowId },
         user: req.body.deviceId || `user-${Date.now()}`,
+        chatkit_configuration: {
+          file_upload: {
+            enabled: enableAttachments
+          }
+        }
       }),
     });
 
