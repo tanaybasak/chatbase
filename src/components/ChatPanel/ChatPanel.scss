@@ -149,7 +149,8 @@
   // Hide attachment button when attachments are disabled
   &--no-attachments {
     :global {
-      // Hide the attachment/file upload button in ChatKit
+      // Hide the attachment/file upload button in ChatKit (the plus icon button)
+      button.lkCln[data-color="primary"][data-variant="ghost"],
       button[aria-label*="attach"],
       button[aria-label*="Attach"],
       button[aria-label*="file"],
@@ -160,6 +161,17 @@
       [class*="Attach"],
       [class*="file-upload"],
       [class*="FileUpload"] {
+        display: none !important;
+      }
+      
+      // More specific: Hide any button with a plus icon SVG in the composer area
+      [class*="composer"] button svg path[d*="16.5v-5.835"],
+      [class*="Composer"] button svg path[d*="16.5v-5.835"] {
+        display: none !important;
+      }
+      
+      // Hide parent button if it contains the plus icon
+      button:has(svg path[d*="16.5v-5.835"]) {
         display: none !important;
       }
     }
