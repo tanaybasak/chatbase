@@ -108,7 +108,16 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`ChatKit backend running on http://localhost:${PORT}`);
   console.log(`Uploads directory: ${uploadsDir}`);
+});
+
+// Keep the process alive and handle errors
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
